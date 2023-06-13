@@ -1,3 +1,6 @@
+import tqdm
+import numpy as np
+
 from googletranslatepy import Translator
 
 class BackTranslator(object):
@@ -18,15 +21,15 @@ class BackTranslator(object):
 		for lang in target_langs:
 			translators.append((lang, Translator(target=lang)))
             
-		if type(docs) == list:
-			for sent in docs:
+		if isinstance(docs, list) or isinstance(docs, (np.ndarray, np.generic)):
+			for i in tqdm.tqdm(range(len(docs))):
 				for (lang, translator) in translators:
-					translated.append((lang, translator.translate(sent)))
-		elif type(docs) == str:
+					translated.append((lang, translator.translate(docs[i])))
+		elif isinstance(docs, str):
 			for (lang, translator) in translators:
 				translated.append((lang, translator.translate(docs)))
 		else:
-			raise TypeError("Input of type {} not supported, \
+			raise TypeError("Input type not supported, \
 							 please input either an array of strings or\
 							 a string")
 
